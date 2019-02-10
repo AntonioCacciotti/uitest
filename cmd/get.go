@@ -15,23 +15,32 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
+	resty "gopkg.in/resty.v1"
 )
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Get some data from the database",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("get called")
+		joinArgs := strings.Join(args, "")
+		s := strings.Split(joinArgs, ",")
+		fmt.Printf("\nstring slip : %v", s)
+		limit := s[0]
+		var buffer bytes.Buffer
+		resp, err := resty.R().
+			SetHeader("Content-Type", "application/json").
+			SetBody(buffer.String()).
+			Post("http://localhost:8080/demoapi/1/1/1/getsomebody?" + limit)
+
+		fmt.Printf("\nError: %v", err)
+		fmt.Printf("\nResponse Status Code: %v", resp.StatusCode())
+		fmt.Printf("\nResponse Body: %v", resp)
 	},
 }
 
