@@ -16,7 +16,10 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 	resty "gopkg.in/resty.v1"
@@ -25,13 +28,31 @@ import (
 // postCmd represents the post command
 var postCmd = &cobra.Command{
 	Use:   "post",
-	Short: "Create a new record",
+	Short: "Create a new record using sintex [name,email,active,balance,picture,age,eyeColor,gender,company,address]",
 	Run: func(cmd *cobra.Command, args []string) {
 		somebody := new(Somebody)
+		j := strings.Join(args, ",")
+		s := strings.Split(j, ",")
+		fmt.Println("copy args to new slice:", s, "len:", len(s))
+		if len(s) < 3 {
+			return fmt.Errorf("Invalir argument! args format is questionID,answerID,nickname")
+		}
+		somebody.Name = s[0]
+		somebody.Email = s[1]
+		b, _ := strconv.ParseBool(s[2])
+		somebody.Active = b;
+		somebody.Balance = s[3]   
+		somebody.Picture = s[4]
+		somebody.Age = s[5]
+		somebody.EyeColor= s[6]
+		somebody.Gender= s[7]
+		somebody.Company = s[8]
+		somebody.Phone= s[9]
+		somebody.Address= s[10]
+		somebody.About= s[11]
 
-		somebody.Name = "antonio"
 		body, _ := json.Marshal(somebody)
-		log.Println("Body:", body)
+
 		resp, err := resty.R().
 			SetHeader("Content-Type", "application/json").
 			SetBody(body).
@@ -57,6 +78,14 @@ func init() {
 	// postCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
+func convertStringToIng(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		log.Fatalln("convertsion string to int FATAL ERROR")
+	}
+	return i
+}
+
 //Somebody obj
 type Somebody struct {
 	Name       string `json:"name"`
@@ -71,5 +100,4 @@ type Somebody struct {
 	Phone      string `json:"phone"`
 	Address    string `json:"address"`
 	About      string `json:"about"`
-	Registered string `json:"registered"`
 }
