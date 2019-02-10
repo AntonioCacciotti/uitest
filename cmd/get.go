@@ -30,7 +30,6 @@ var getCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		joinArgs := strings.Join(args, "")
 		s := strings.Split(joinArgs, ",")
-		fmt.Printf("\nstring slip : %v", s)
 		limit := s[0]
 		var buffer bytes.Buffer
 		resp, err := resty.R().

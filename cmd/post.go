@@ -15,23 +15,31 @@
 package cmd
 
 import (
-	"fmt"
+	"encoding/json"
+	"log"
 
 	"github.com/spf13/cobra"
+	resty "gopkg.in/resty.v1"
 )
 
 // postCmd represents the post command
 var postCmd = &cobra.Command{
 	Use:   "post",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Create a new record",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("post called")
+		somebody := new(Somebody)
+
+		somebody.Name = "antonio"
+		body, _ := json.Marshal(somebody)
+		log.Println("Body:", body)
+		resp, err := resty.R().
+			SetHeader("Content-Type", "application/json").
+			SetBody(body).
+			Post("http://localhost:8080/demoapi/1/1/1/signup/appName/")
+
+		log.Println("Error:", err)
+		log.Println("Response Status Code:", resp.StatusCode())
+		log.Println("Response Body:", resp)
 	},
 }
 
@@ -47,4 +55,21 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// postCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+//Somebody obj
+type Somebody struct {
+	Name       string `json:"name"`
+	Email      string `json:"email"`
+	Active     bool   `json:"isActive"`
+	Balance    string `json:"balance"`
+	Picture    string `json:"picture"`
+	Age        string `json:"age"`
+	EyeColor   string `json:"eyeColor"`
+	Gender     string `json:"gender"`
+	Company    string `json:"company"`
+	Phone      string `json:"phone"`
+	Address    string `json:"address"`
+	About      string `json:"about"`
+	Registered string `json:"registered"`
 }
