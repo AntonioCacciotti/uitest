@@ -28,35 +28,34 @@ import (
 // postCmd represents the post command
 var postCmd = &cobra.Command{
 	Use:   "post",
-	Short: "Create a new record using sintex [name,email,active,balance,picture,age,eyeColor,gender,company,address]",
+	Short: "Create a new record using sintex [name,email,balance,picture,age,eyeColor,gender,company,address]",
 	Run: func(cmd *cobra.Command, args []string) {
 		somebody := new(Somebody)
 		j := strings.Join(args, ",")
 		s := strings.Split(j, ",")
 		fmt.Println("copy args to new slice:", s, "len:", len(s))
 		if len(s) < 3 {
-			fmt.Errorf("Invalir argument! args format is questionID,answerID,nickname")
+			fmt.Errorf("Invalid argument! args format is questionID,answerID,nickname")
 		}
-		somebody.Name = s[0]
-		somebody.Email = s[1]
-		b, _ := strconv.ParseBool(s[2])
-		somebody.Active = b
-		somebody.Balance = s[3]
-		somebody.Picture = s[4]
-		somebody.Age = s[5]
-		somebody.EyeColor = s[6]
-		somebody.Gender = s[7]
-		somebody.Company = s[8]
-		somebody.Phone = s[9]
-		somebody.Address = s[10]
-		somebody.About = s[11]
+		somebody.Name = LenghtArray(s, 0)
+		somebody.Email = LenghtArray(s, 1)
+		somebody.Active = true
+		somebody.Balance = LenghtArray(s, 2)
+		somebody.Picture = LenghtArray(s, 3)
+		somebody.Age = LenghtArray(s, 4)
+		somebody.EyeColor = LenghtArray(s, 5)
+		somebody.Gender = LenghtArray(s, 6)
+		somebody.Company = LenghtArray(s, 7)
+		somebody.Phone = LenghtArray(s, 8)
+		somebody.Address = LenghtArray(s, 9)
+		somebody.About = LenghtArray(s, 10)
 
 		body, _ := json.Marshal(somebody)
 
 		resp, err := resty.R().
 			SetHeader("Content-Type", "application/json").
 			SetBody(body).
-			Put("http://localhost:8080/demoapi/1/1/1/signup/appName/")
+			Post("http://localhost:8080/demoapi/1/1/1/signup/appName/")
 
 		log.Println("Error:", err)
 		log.Println("Response Status Code:", resp.StatusCode())
@@ -64,6 +63,13 @@ var postCmd = &cobra.Command{
 	},
 }
 
+//LenghtArray get the element in the b position
+func LenghtArray(a []string, b int) string {
+	if len(a) > b {
+		return a[b]
+	}
+	return ""
+}
 func init() {
 	rootCmd.AddCommand(postCmd)
 

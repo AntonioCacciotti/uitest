@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -36,33 +35,22 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		somebody := new(Somebody)
+		hashMap := make(map[string]string)
 		j := strings.Join(args, ",")
 		s := strings.Split(j, ",")
 		fmt.Println("copy args to new slice:", s, "len:", len(s))
 		if len(s) < 3 {
 			fmt.Errorf("Invalir argument! args format is questionID,answerID,nickname")
 		}
-		somebody.Name = s[0]
-		somebody.Email = s[1]
-		b, _ := strconv.ParseBool(s[2])
-		somebody.Active = b
-		somebody.Balance = s[3]
-		somebody.Picture = s[4]
-		somebody.Age = s[5]
-		somebody.EyeColor = s[6]
-		somebody.Gender = s[7]
-		somebody.Company = s[8]
-		somebody.Phone = s[9]
-		somebody.Address = s[10]
-		somebody.About = s[11]
-
-		body, _ := json.Marshal(somebody)
+		hashMap["id"] = s[0]
+		hashMap["eyeColor"] = s[1]
+		hashMap["company"] = s[2]
+		body, _ := json.Marshal(hashMap)
 
 		resp, err := resty.R().
 			SetHeader("Content-Type", "application/json").
 			SetBody(body).
-			Post("http://localhost:8080/demoapi/1/1/1/signup/appName/")
+			Put("http://localhost:8080/demoapi/1/1/1/edit/appName/")
 
 		log.Println("Error:", err)
 		log.Println("Response Status Code:", resp.StatusCode())

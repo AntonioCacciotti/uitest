@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 
@@ -23,6 +22,7 @@ import (
 	resty "gopkg.in/resty.v1"
 )
 
+//company=RODEOLOGY,eyeColor=blue,age=35&limit=1000
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -30,15 +30,24 @@ var getCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		joinArgs := strings.Join(args, "")
 		s := strings.Split(joinArgs, ",")
-		limit := s[0]
-		var buffer bytes.Buffer
+		query := s[0]
+		limit := s[2]
+		if query == "company" {
+			query = "?company=" + s[1]
+		} else if query == "eyeColor" {
+			query = "?eyeColor=" + s[1]
+		} else if query == "age" {
+			query = "?age=" + s[1]
+		} else {
+			limit = "10"
+		}
+		query = query + "&limit=" + limit
 		resp, err := resty.R().
 			SetHeader("Content-Type", "application/json").
-			SetBody(buffer.String()).
-			Post("http://localhost:8080/demoapi/1/1/1/getsomebody?" + limit)
+			Get("http://localhost:8080/demoapi/1/1/1/getsomebody" + query)
 
 		fmt.Printf("\nError: %v", err)
-		fmt.Printf("\nResponse Status Code: %v", resp.StatusCode())
+		fmt.Printf("\nResponse Status Code: %v", resp.StatusCode(), "query:", query)
 		fmt.Printf("\nResponse Body: %v", resp)
 	},
 }
