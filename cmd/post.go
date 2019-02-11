@@ -35,28 +35,28 @@ var postCmd = &cobra.Command{
 		s := strings.Split(j, ",")
 		fmt.Println("copy args to new slice:", s, "len:", len(s))
 		if len(s) < 3 {
-			return fmt.Errorf("Invalir argument! args format is questionID,answerID,nickname")
+			fmt.Errorf("Invalir argument! args format is questionID,answerID,nickname")
 		}
 		somebody.Name = s[0]
 		somebody.Email = s[1]
 		b, _ := strconv.ParseBool(s[2])
-		somebody.Active = b;
-		somebody.Balance = s[3]   
+		somebody.Active = b
+		somebody.Balance = s[3]
 		somebody.Picture = s[4]
 		somebody.Age = s[5]
-		somebody.EyeColor= s[6]
-		somebody.Gender= s[7]
+		somebody.EyeColor = s[6]
+		somebody.Gender = s[7]
 		somebody.Company = s[8]
-		somebody.Phone= s[9]
-		somebody.Address= s[10]
-		somebody.About= s[11]
+		somebody.Phone = s[9]
+		somebody.Address = s[10]
+		somebody.About = s[11]
 
 		body, _ := json.Marshal(somebody)
 
 		resp, err := resty.R().
 			SetHeader("Content-Type", "application/json").
 			SetBody(body).
-			Post("http://localhost:8080/demoapi/1/1/1/signup/appName/")
+			Put("http://localhost:8080/demoapi/1/1/1/signup/appName/")
 
 		log.Println("Error:", err)
 		log.Println("Response Status Code:", resp.StatusCode())
@@ -88,16 +88,16 @@ func convertStringToIng(s string) int {
 
 //Somebody obj
 type Somebody struct {
-	Name       string `json:"name"`
-	Email      string `json:"email"`
-	Active     bool   `json:"isActive"`
-	Balance    string `json:"balance"`
-	Picture    string `json:"picture"`
-	Age        string `json:"age"`
-	EyeColor   string `json:"eyeColor"`
-	Gender     string `json:"gender"`
-	Company    string `json:"company"`
-	Phone      string `json:"phone"`
-	Address    string `json:"address"`
-	About      string `json:"about"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Active   bool   `json:"isActive"`
+	Balance  string `json:"balance"`
+	Picture  string `json:"picture"`
+	Age      string `json:"age"`
+	EyeColor string `json:"eyeColor"`
+	Gender   string `json:"gender"`
+	Company  string `json:"company"`
+	Phone    string `json:"phone"`
+	Address  string `json:"address"`
+	About    string `json:"about"`
 }

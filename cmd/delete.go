@@ -16,8 +16,11 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/spf13/cobra"
+	resty "gopkg.in/resty.v1"
 )
 
 // deleteCmd represents the delete command
@@ -31,7 +34,26 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
+		j := strings.Join(args, ",")
+		s := strings.Split(j, ",")
+		fmt.Println("copy args to new slice:", s, "len:", len(s))
+		if len(s) < 1 {
+			fmt.Errorf("Invalir argument! args format is questionID,answerID,nickname")
+		}
+		var query string
+		dataInput := s[0]
+		if strings.Contains(dataInput, "@") {
+			query = "?email=" + dataInput
+		} else {
+			query = "?id=" + dataInput
+		}
+		resp, err := resty.R().
+			SetHeader("Content-Type", "application/json").
+			Delete("http://localhost:8080/demoapi/1/1/1/delete/appName/" + query)
+
+		log.Println("Error:", err)
+		log.Println("Response Status Code:", resp.StatusCode(), " query:", query)
+		log.Println("Response Body:", resp)
 	},
 }
 
